@@ -22,24 +22,93 @@ purrr::walk(~require(.x, character.only = TRUE))
 
 
 family_asthma <- read_dta('family_asthma.dta')
+
+long_vars <- c('age', 'smk', 'cncig', 'fvc', 'fev')
+
+family_asthma_long_fev <- family_asthma %>% 
+  pivot_longer(cols = starts_with('fev'), names_to = 'year',
+               names_prefix = 'fev', values_to = 'fev', values_drop_na = TRUE,
+               names_repair = 'unique') %>% 
+  select(id, year, fev)
+
+family_asthma_long_fvc <- family_asthma %>% 
+  pivot_longer(cols = starts_with('fvc'), names_to = 'year',
+               names_prefix = 'fvc', values_to = 'fvc', values_drop_na = TRUE,
+               names_repair = 'unique') %>% 
+  select(id, year, fvc)
+
+family_asthma_long_age <- family_asthma %>% 
+  pivot_longer(cols = starts_with('age'), names_to = 'year',
+               names_prefix = 'age', values_to = 'age', values_drop_na = TRUE,
+               names_repair = 'unique') %>% 
+  select(id, year, age)
+
+family_asthma_long_smk <- family_asthma %>% 
+  pivot_longer(cols = starts_with('smk'), names_to = 'year',
+               names_prefix = 'smk', values_to = 'smk', values_drop_na = TRUE,
+               names_repair = 'unique') %>% 
+  select(id, year, smk)
+
+
+family_asthma_long_cncig <- family_asthma %>% 
+  pivot_longer(cols = starts_with('cncig'), names_to = 'year',
+               names_prefix = 'cncig', values_to = 'cncig', values_drop_na = TRUE,
+               names_repair = 'unique') %>% 
+  select(id, year, cncig)
+
+
+family_asthma_long <- 
+  family_asthma_long_fev %>%
+  full_join(family_asthma_long_cncig, by = c("id", "year")) %>%
+  full_join(family_asthma_long_smk, by = c("id", "year")) %>% 
+  full_join(family_asthma_long_fvc, by = c("id", "year")) %>% 
+  full_join(family_asthma_long_age, by = c("id", "year")) %>% 
+  left_join(family_asthma %>% rename(smoke_ever = smkever) %>%
+              select(!starts_with(long_vars)), by = c("id")) %>% 
+  mutate(year =  parse_number(year),
+         cncig = ifelse(smoke_ever == 0, 0 , cncig))
+
+
+```
+The primary research questions are as follows:
+1. Do asthmatics have steeper rates of decline (slope) or lower levels of lung function
+(FEV1) than non-asthmatics, independent of smoking history?
+regress fev on time for non-asthmatics
+
+```{r}
+tbl_regression(lm(fev~year +year:asthma, data = family_asthma_long), estimate_fun = partial(style_ratio, digits = 3))
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+2. Do asthmatic smokers have steeper rates of decline or lower levels of lung function
+than non-asthmatic smokers? Here you can explore three options 1) using the fixed effect
+variable ever smoke, 2) using the time dependent variable for smoking, or 3) using the
+current number of cigarettes per day. When using this I would suggest making it a
+categorical variable using quartiles etc.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+```{r}
+var_label(family_asthma_long$smoke_ever) <- "Ever Smoked"
+tbl_regression(lm(fev ~ year + year:asthma + smoke_ever,
+                  data = family_asthma_long),
+               estimate_fun = partial(style_ratio, digits = 3))
+
+tbl_regression(lm(fev ~ year + year:asthma + smk,
+                  data = family_asthma_long),
+               estimate_fun = partial(style_ratio, digits = 3))
+tbl_regression(lm(fev ~ year + year:asthma + cncig,
+                  data = family_asthma_long),
+               estimate_fun = partial(style_ratio, digits = 3))
+
+family_asthma %>% count(cncig1, smkever) %>% filter(smkever==0)
+
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Hints:
+1. When random effects are nested, the order in which they are listed is important. The
+order in which they are specified (from left to right) is significant – xtmixed assumes that
+the second factor is nested in the first. In this data subjects (id) are nested within
+Families (family).
+2. Subjects should be tested for a RCM with age but families should not, any adjustment
+for serial correlation with time done at the subject level would also remove it at the
+family level.
