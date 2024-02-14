@@ -1,0 +1,272 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Untitled},
+  pdfauthor={Max Anthenelli},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Untitled}
+\author{Max Anthenelli}
+\date{2024-02-14}
+
+\begin{document}
+\maketitle
+
+The primary research questions are as follows: 1. Do asthmatics have
+steeper rates of decline (slope) or lower levels of lung function (FEV1)
+than non-asthmatics, independent of smoking history? regress fev on time
+for non-asthmatics
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tbl\_regression}\NormalTok{(}\FunctionTok{lm}\NormalTok{(fev}\SpecialCharTok{\textasciitilde{}}\NormalTok{year }\SpecialCharTok{+}\NormalTok{year}\SpecialCharTok{:}\NormalTok{asthma, }\AttributeTok{data =}\NormalTok{ family\_asthma\_long), }\AttributeTok{estimate\_fun =} \FunctionTok{partial}\NormalTok{(style\_ratio, }\AttributeTok{digits =} \DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Table printed with `knitr::kable()`, not {gt}. Learn why at
+## https://www.danieldsjoberg.com/gtsummary/articles/rmarkdown.html
+## To suppress this message, include `message = FALSE` in code chunk header.
+\end{verbatim}
+
+\begin{longtable}[]{@{}lccc@{}}
+\toprule\noalign{}
+\textbf{Characteristic} & \textbf{Beta} & \textbf{95\% CI} &
+\textbf{p-value} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+year & 0.004 & -0.002, 0.009 & 0.2 \\
+year * ever asthma & -0.005 & -0.015, 0.005 & 0.3 \\
+\end{longtable}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Do asthmatic smokers have steeper rates of decline or lower levels of
+  lung function than non-asthmatic smokers? Here you can explore three
+  options 1) using the fixed effect variable ever smoke, 2) using the
+  time dependent variable for smoking, or 3) using the current number of
+  cigarettes per day. When using this I would suggest making it a
+  categorical variable using quartiles etc.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{var\_label}\NormalTok{(family\_asthma\_long}\SpecialCharTok{$}\NormalTok{smoke\_ever) }\OtherTok{\textless{}{-}} \StringTok{"Ever Smoked"}
+\FunctionTok{tbl\_regression}\NormalTok{(}\FunctionTok{lm}\NormalTok{(fev }\SpecialCharTok{\textasciitilde{}}\NormalTok{ year }\SpecialCharTok{+}\NormalTok{ year}\SpecialCharTok{:}\NormalTok{asthma }\SpecialCharTok{+}\NormalTok{ smoke\_ever,}
+                  \AttributeTok{data =}\NormalTok{ family\_asthma\_long),}
+               \AttributeTok{estimate\_fun =} \FunctionTok{partial}\NormalTok{(style\_ratio, }\AttributeTok{digits =} \DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Table printed with `knitr::kable()`, not {gt}. Learn why at
+## https://www.danieldsjoberg.com/gtsummary/articles/rmarkdown.html
+## To suppress this message, include `message = FALSE` in code chunk header.
+\end{verbatim}
+
+\begin{longtable}[]{@{}lccc@{}}
+\toprule\noalign{}
+\textbf{Characteristic} & \textbf{Beta} & \textbf{95\% CI} &
+\textbf{p-value} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+year & 0.004 & -0.001, 0.009 & 0.15 \\
+Ever Smoked & 0.256 & 0.216, 0.296 & \textless0.001 \\
+year * ever asthma & -0.005 & -0.015, 0.005 & 0.3 \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tbl\_regression}\NormalTok{(}\FunctionTok{lm}\NormalTok{(fev }\SpecialCharTok{\textasciitilde{}}\NormalTok{ year }\SpecialCharTok{+}\NormalTok{ year}\SpecialCharTok{:}\NormalTok{asthma }\SpecialCharTok{+}\NormalTok{ smk,}
+                  \AttributeTok{data =}\NormalTok{ family\_asthma\_long),}
+               \AttributeTok{estimate\_fun =} \FunctionTok{partial}\NormalTok{(style\_ratio, }\AttributeTok{digits =} \DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Table printed with `knitr::kable()`, not {gt}. Learn why at
+## https://www.danieldsjoberg.com/gtsummary/articles/rmarkdown.html
+## To suppress this message, include `message = FALSE` in code chunk header.
+\end{verbatim}
+
+\begin{longtable}[]{@{}lccc@{}}
+\toprule\noalign{}
+\textbf{Characteristic} & \textbf{Beta} & \textbf{95\% CI} &
+\textbf{p-value} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+year & 0.005 & -0.001, 0.010 & 0.087 \\
+smoking status, initial q & -0.136 & -0.160, -0.112 & \textless0.001 \\
+year * ever asthma & -0.006 & -0.016, 0.004 & 0.2 \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tbl\_regression}\NormalTok{(}\FunctionTok{lm}\NormalTok{(fev }\SpecialCharTok{\textasciitilde{}}\NormalTok{ year }\SpecialCharTok{+}\NormalTok{ year}\SpecialCharTok{:}\NormalTok{asthma }\SpecialCharTok{+}\NormalTok{ cncig,}
+                  \AttributeTok{data =}\NormalTok{ family\_asthma\_long),}
+               \AttributeTok{estimate\_fun =} \FunctionTok{partial}\NormalTok{(style\_ratio, }\AttributeTok{digits =} \DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Table printed with `knitr::kable()`, not {gt}. Learn why at
+## https://www.danieldsjoberg.com/gtsummary/articles/rmarkdown.html
+## To suppress this message, include `message = FALSE` in code chunk header.
+\end{verbatim}
+
+\begin{longtable}[]{@{}lccc@{}}
+\toprule\noalign{}
+\textbf{Characteristic} & \textbf{Beta} & \textbf{95\% CI} &
+\textbf{p-value} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+year & 0.011 & 0.005, 0.017 & \textless0.001 \\
+cncig & 0.010 & 0.008, 0.012 & \textless0.001 \\
+year * ever asthma & -0.006 & -0.017, 0.004 & 0.2 \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{family\_asthma }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{count}\NormalTok{(cncig1, smkever) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(smkever}\SpecialCharTok{==}\DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 3
+##   cncig1 smkever     n
+##    <dbl>   <dbl> <int>
+## 1  0.200       0     1
+## 2 NA           0  1135
+\end{verbatim}
+
+Hints: 1. When random effects are nested, the order in which they are
+listed is important. The order in which they are specified (from left to
+right) is significant -- xtmixed assumes that the second factor is
+nested in the first. In this data subjects (id) are nested within
+Families (family). 2. Subjects should be tested for a RCM with age but
+families should not, any adjustment for serial correlation with time
+done at the subject level would also remove it at the family level.
+
+\end{document}
