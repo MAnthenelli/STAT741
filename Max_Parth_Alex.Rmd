@@ -20,6 +20,8 @@ c("tidyverse", "magrittr", "rlang", "glue",
 ) |>
 purrr::walk(~require(.x, character.only = TRUE))
 
+
+family_asthma <- read_dta('family_asthma.dta')
 ```
 
 ## R Markdown
