@@ -15,7 +15,7 @@ setwd(working_directory)
 ## choose required packages ----
 c("tidyverse", "magrittr", "rlang", "glue",
   "haven", "labelled",
-  "gt", "gtsummary", "webshot2", 
+  "lme4", "steps", "gt", "gtsummary", "webshot2", 
   "scales", "grid", "ggtext", "patchwork"
 ) |>
 purrr::walk(~require(.x, character.only = TRUE))
@@ -25,37 +25,24 @@ family_asthma <- read_dta('family_asthma.dta')
 
 long_vars <- c('age', 'smk', 'cncig', 'fvc', 'fev')
 
-family_asthma_long_fev <- family_asthma %>% 
-  pivot_longer(cols = starts_with('fev'), names_to = 'year',
-               names_prefix = 'fev', values_to = 'fev', values_drop_na = TRUE,
-               names_repair = 'unique') %>% 
-  select(id, year, fev)
-
-family_asthma_long_fvc <- family_asthma %>% 
-  pivot_longer(cols = starts_with('fvc'), names_to = 'year',
-               names_prefix = 'fvc', values_to = 'fvc', values_drop_na = TRUE,
-               names_repair = 'unique') %>% 
-  select(id, year, fvc)
-
-family_asthma_long_age <- family_asthma %>% 
-  pivot_longer(cols = starts_with('age'), names_to = 'year',
-               names_prefix = 'age', values_to = 'age', values_drop_na = TRUE,
-               names_repair = 'unique') %>% 
-  select(id, year, age)
-
-family_asthma_long_smk <- family_asthma %>% 
-  pivot_longer(cols = starts_with('smk'), names_to = 'year',
-               names_prefix = 'smk', values_to = 'smk', values_drop_na = TRUE,
-               names_repair = 'unique') %>% 
-  select(id, year, smk)
-
-
-family_asthma_long_cncig <- family_asthma %>% 
-  pivot_longer(cols = starts_with('cncig'), names_to = 'year',
-               names_prefix = 'cncig', values_to = 'cncig', values_drop_na = TRUE,
-               names_repair = 'unique') %>% 
-  select(id, year, cncig)
-
+pivot_long_repeat_vars <- 
+  function(var){
+  df_name <- glue("family_asthma_long_{var}")
+  message(glue("reshaping {df_name}"))
+  var_name <- ensym(var)
+  df <- 
+    family_asthma %>%   
+    pivot_longer(cols = starts_with(var),
+                 names_to = 'year',
+                 names_prefix = var, 
+                 values_to = var,
+                 values_drop_na = TRUE,
+                 names_repair = 'unique') %>% 
+  select(id, year, all_of(var))
+  assign(df_name, df, envir = .GlobalEnv)
+  }
+          
+walk(long_vars, ~pivot_long_repeat_vars(.x))
 
 family_asthma_long <- 
   family_asthma_long_fev %>%
@@ -64,10 +51,9 @@ family_asthma_long <-
   full_join(family_asthma_long_fvc, by = c("id", "year")) %>% 
   full_join(family_asthma_long_age, by = c("id", "year")) %>% 
   left_join(family_asthma %>% rename(smoke_ever = smkever) %>%
-              select(!starts_with(long_vars)), by = c("id")) %>% 
+  select(!starts_with(long_vars)), by = c("id")) %>% 
   mutate(year =  parse_number(year),
          cncig = ifelse(smoke_ever == 0, 0 , cncig))
-
 
 ```
 The primary research questions are as follows:
@@ -75,8 +61,13 @@ The primary research questions are as follows:
 (FEV1) than non-asthmatics, independent of smoking history?
 regress fev on time for non-asthmatics
 
-```{r}
-tbl_regression(lm(fev~year +year:asthma, data = family_asthma_long), estimate_fun = partial(style_ratio, digits = 3))
+```{r message=FALSE}
+family_asthma_long %>% 
+lmer(fev ~ year + year:asthma + asthma + (1 | family) + ( year || id) , data = .) %>% 
+tbl_regression(estimate_fun = partial(style_ratio, digits = 3),
+               style_pvalue = function(x) style_pvalue(x, digits = 2),
+               conf.int = FALSE) %>% 
+  add_global_p()
 ```
 
 
@@ -87,21 +78,32 @@ current number of cigarettes per day. When using this I would suggest making it 
 categorical variable using quartiles etc.
 
 
-```{r}
+```{r message = FALSE}
 var_label(family_asthma_long$smoke_ever) <- "Ever Smoked"
-tbl_regression(lm(fev ~ year + year:asthma + smoke_ever,
-                  data = family_asthma_long),
-               estimate_fun = partial(style_ratio, digits = 3))
 
-tbl_regression(lm(fev ~ year + year:asthma + smk,
-                  data = family_asthma_long),
-               estimate_fun = partial(style_ratio, digits = 3))
-tbl_regression(lm(fev ~ year + year:asthma + cncig,
-                  data = family_asthma_long),
-               estimate_fun = partial(style_ratio, digits = 3))
+family_asthma_long %>% 
+  lmer(fev ~ year + year:asthma + asthma + smoke_ever +
+       (1 | family) + (year || id) , data = .) %>%
+  tbl_regression(estimate_fun = partial(style_ratio, digits = 3),
+               style_pvalue = function(x) style_pvalue(x, digits = 2),
+               conf.int = FALSE) %>% 
+  add_global_p()
 
-family_asthma %>% count(cncig1, smkever) %>% filter(smkever==0)
+family_asthma_long %>% 
+  lmer(fev ~ year + year:asthma + asthma + smk +
+       (1 | family) + (year || id) , data = .) %>%
+  tbl_regression(estimate_fun = partial(style_ratio, digits = 3),
+               style_pvalue = function(x) style_pvalue(x, digits = 2),
+               conf.int = FALSE) %>% 
+  add_global_p()
 
+family_asthma_long %>% 
+  lmer(fev ~ year + year:asthma + asthma + smk +
+       (1 | family) + ( 1 | id) , data = .) %>%
+  tbl_regression(estimate_fun = partial(style_ratio, digits = 3),
+               style_pvalue = function(x) style_pvalue(x, digits = 2),
+               conf.int = FALSE) %>% 
+  add_global_p()
 ```
 
 Hints:
@@ -112,3 +114,12 @@ Families (family).
 2. Subjects should be tested for a RCM with age but families should not, any adjustment
 for serial correlation with time done at the subject level would also remove it at the
 family level.
+
+Notes:
+ 
+1.  Both subject (id) and subject by age, and family (family) should be considered as potential random effects (i.e. fit a RCM)
+2. Be sure to select the optimal covariance pattern for your random effects.
+2. Plot resulting mean curves whenever you can to demonstrate significant effects.
+3. It is not necessary to test higher order polynomials in either the fixed or random effects.
+4. Be sure to provide residual plots, normal probability plots for any random effects, and to test for serial correlation in residuals.
+5. Lung function measures generally need to be adjusted for anthropometric measures height and sex.
